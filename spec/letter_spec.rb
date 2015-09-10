@@ -59,7 +59,7 @@ describe LetterAvatarApp do
       end
     end
 
-    context "with a colour" do
+    context "with an RGB colour" do
       let(:params) { { 'r' => 10, 'g' => 20, 'b' => 30 } }
 
       it_behaves_like "a successful request"
@@ -74,6 +74,24 @@ describe LetterAvatarApp do
 
       it "has a non-standard background" do
         expect(image[0, 0]).to eq(169090815)
+      end
+    end
+
+    context "with a hex colour" do
+      let(:params) { { 'color' => 'A1B2C3' } }
+
+      it_behaves_like "a successful request"
+
+      it "returns an image with the default height" do
+        expect(image.height).to eq(50)
+      end
+
+      it "returns an image with the default width" do
+        expect(image.width).to eq(50)
+      end
+
+      it "has a non-standard background" do
+        expect(image[0, 0]).to eq(2712847359)
       end
     end
 
