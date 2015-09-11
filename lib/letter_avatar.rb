@@ -1,4 +1,5 @@
-require 'tempfile'
+require 'fileutils'
+require 'securerandom'
 
 class LetterAvatar
   # CHANGE these values to support more pixel ratios
@@ -8,19 +9,34 @@ class LetterAvatar
   class << self
 
     def generate(letter, size, r, g, b)
+
       size = FULLSIZE if size > FULLSIZE
 
-      file = Tempfile.new('avatar')
-      path = file.path + '.png'
-      file.unlink
+      fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full.png")
+      resized_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/#{size}.png")
 
-      `#{fullsize_command(path, letter, r, g, b)} 2>/dev/null`
-      `#{resize_command(path, size)} 2>/dev/null`
-      `pngout #{path} 2>/dev/null`
+      return File.read(resized_path) if File.exist? resized_path
 
-      File.read(path)
-    ensure
-      File.unlink(path)
+      temp_file_path = temp_path("/" << SecureRandom.hex << ".png")
+
+      if File.exist? fullsize_path
+        FileUtils.cp(fullsize_path, temp_file_path)
+      else
+        `#{fullsize_command(temp_file_path, letter, r, g, b)} 2>/dev/null`
+        FileUtils.cp(temp_file_path, temp_file_path + "1")
+        FileUtils.mkdir_p(File.dirname(fullsize_path))
+        FileUtils.mv(temp_file_path + "1", fullsize_path)
+      end
+
+      `#{resize_command(temp_file_path, size)} 2>/dev/null`
+      `pngout #{temp_file_path} 2>/dev/null`
+
+      FileUtils.mv(temp_file_path, resized_path)
+      File.read(resized_path)
+    end
+
+    def temp_path(path)
+      "#{ENV["TEMP_FILE_PATH"] || "/tmp"}#{path}"
     end
 
     def fullsize_command(path, letter, r, g, b)

@@ -10,6 +10,9 @@ params:
 expose:
   - "80:8080"
 
+env:
+  TEMP_FILE_PATH: /shared/cache
+
 volumes:
   - volume:
      host: /var/discourse/shared/letter-avatars
