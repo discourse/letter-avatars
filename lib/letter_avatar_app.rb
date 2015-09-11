@@ -40,7 +40,8 @@ class LetterAvatarApp
       'Content-Length' => avatar.bytesize.to_s,
       'Last-Modified' => 'Tue, 11 Jan 2000 00:57:26 GMT',
       'Expires' => expires,
-      'Etag' => "#{letter}#{size}#{r}#{g}#{b}#{VERSION}"
+      'Etag' => "#{letter}#{size}#{r}#{g}#{b}#{VERSION}",
+      'Vary' => 'Accept-Encoding'
     }, [avatar]]
   end
 
