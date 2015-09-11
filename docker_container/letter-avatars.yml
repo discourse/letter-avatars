@@ -4,6 +4,8 @@ update_pups: false
 
 params:
   home: /var/www/letter-avatars
+  pngout_url: http://static.jonof.id.au/dl/kenutils/pngout-20150319-linux-static.tar.gz
+  pngout: pngout-20150319-linux-static
 
 expose:
   - "80:8080"
@@ -14,7 +16,7 @@ volumes:
      guest: /shared
 
 run:
-    - exec: (cd /shared/optipng-0.7.5 && make install) || (cd /shared && wget http://prdownloads.sourceforge.net/optipng/optipng-0.7.5.tar.gz && tar -xzvf optipng-0.7.5.tar.gz && cd /shared/optipng-0.7.5 && ./configure && make install)
+    - exec: (cp /shared/pngout-static /usr/bin/pngout)  || (cd /shared && wget $pngout_url && tar -xzvf $pngout.tar.gz && cp /shared/$pngout/i686/pngout-static /shared/pngout-static && cp /shared/pngout-static /usr/bin/pngout)
     - exec:
         cmd:
           - useradd web -s /bin/bash -m -U
