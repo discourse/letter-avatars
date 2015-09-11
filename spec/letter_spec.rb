@@ -62,4 +62,13 @@ describe LetterAvatarApp do
     end
 
   end
+
+
+  context "valid number" do
+    let(:url) { "/letter/8/123456/25.png" }
+
+    context "with a hex colour" do
+      it_behaves_like "a successful request"
+    end
+  end
 end

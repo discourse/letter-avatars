@@ -11,7 +11,7 @@ class LetterAvatarApp
       return error(405, "Only GET requests are supported")
     end
 
-    unless env['PATH_INFO'] =~ %r{^/letter/([a-zA-Z])/([0-9A-Fa-f]{6})/(\d+)\.png$}
+    unless env['PATH_INFO'] =~ %r{^/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
       return error(404, "Resource not found")
     end
 
