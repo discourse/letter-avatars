@@ -4,6 +4,6 @@ result=`cd /src/letter-avatars && git pull | grep "Already up-to-date"`
 
 if [ -z "$result" ]; then
    echo "updating..."
-   cd /var/discourse && ./launcher bootstrap letter_avatars && ./launcher destroy letter_avatars && ./launcher start letter_avatars
+   cd /var/discourse && ./launcher bootstrap letter-avatars && ./launcher destroy letter-avatars && ./launcher start letter-avatars
 fi
 
