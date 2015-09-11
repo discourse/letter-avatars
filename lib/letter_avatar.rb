@@ -1,4 +1,4 @@
-require 'open3'
+require 'tempfile'
 
 class LetterAvatar
   # CHANGE these values to support more pixel ratios
@@ -10,38 +10,38 @@ class LetterAvatar
     def generate(letter, size, r, g, b)
       size = FULLSIZE if size > FULLSIZE
 
-      Open3.pipeline_r(
-        fullsize_command(letter, r, g, b),
-        resize_command(size)
-      ) do |stdout_fd, wait_threads|
-        stdout_fd.read.tap do
-          if wait_threads.any? { |th| th.value.exitstatus != 0 }
-            raise RuntimeError,
-                  "Image pipeline failed: #{wait_threads.map { |th| th.value }.inspect}"
-          end
-        end
-      end
+      file = Tempfile.new('avatar')
+      path = file.path + '.png'
+      file.unlink
+
+      `#{fullsize_command(path, letter, r, g, b)} 2>/dev/null`
+      `#{resize_command(path, size)} 2>/dev/null`
+      `optipng -silent #{path} 2>/dev/null`
+
+      File.read(path)
+    ensure
+      File.unlink(path)
     end
 
-    def fullsize_command(letter, r, g, b)
+    def fullsize_command(path, letter, r, g, b)
       %W{
         convert
         -size #{FULLSIZE}x#{FULLSIZE}
-        xc:rgb(#{r},#{g},#{b})
+        xc:'rgb(#{r},#{g},#{b})'
         -pointsize #{POINTSIZE}
-        -fill #FFFFFFCC
-        -font Helvetica
+        -fill '#FFFFFFCC'
+        -font 'Helvetica'
         -gravity Center
-        -annotate -0+26 #{letter}
+        -annotate -0+26 '#{letter}'
         -depth 8
-        png:-
-      }
+        '#{path}'
+      }.join(' ')
     end
 
-    def resize_command(size)
+    def resize_command(path,size)
       %W{
         convert
-        png:-
+        '#{path}'
         -gravity center
         -background transparent
         -thumbnail #{size}x#{size}
@@ -49,8 +49,8 @@ class LetterAvatar
         -interpolate bicubic
         -unsharp 2x0.5+0.7+0
         -quality 98
-        png:-
-      }
+        '#{path}'
+      }.join(' ')
     end
 
   end
