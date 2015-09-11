@@ -30,7 +30,6 @@ GEM
       guard-compat (~> 1.0)
       spork (>= 0.8.4)
     hitimes (1.2.2)
-    kgio (2.9.2)
     listen (2.10.1)
       celluloid (~> 0.16.0)
       rb-fsevent (>= 0.9.3)
@@ -45,10 +44,10 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    puma (2.13.4)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
-    raindrops (0.13.0)
     rake (10.4.2)
     rb-fsevent (0.9.5)
     rb-inotify (0.9.5)
@@ -72,10 +71,6 @@ GEM
     thor (0.19.1)
     timers (4.0.1)
       hitimes
-    unicorn (4.8.3)
-      kgio (~> 2.6)
-      rack
-      raindrops (~> 0.7)
 
 PLATFORMS
   ruby
@@ -85,9 +80,12 @@ DEPENDENCIES
   chunky_png
   guard-rspec
   guard-spork
+  puma
   rack
   rack-test
   rake (~> 10.4, >= 10.4.2)
   rb-inotify (~> 0.9)
   rspec
-  unicorn
+
+BUNDLED WITH
+   1.10.6

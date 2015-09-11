@@ -1,7 +1,7 @@
 source 'https://rubygems.org/'
 
 gem 'rack'
-gem 'unicorn'
+gem 'puma'
 
 group 'test' do
   gem 'bundler'
