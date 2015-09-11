@@ -11,24 +11,14 @@ class LetterAvatarApp
       return error(405, "Only GET requests are supported")
     end
 
-    unless env['PATH_INFO'] =~ %r{^/letter/([a-zA-Z])$}
+    unless env['PATH_INFO'] =~ %r{^/letter/([a-zA-Z])/([0-9A-F]{6})/(\d+)\.png$}
       return error(404, "Resource not found")
     end
 
     letter = $1.upcase
-    params = Rack::Utils.parse_query(env['QUERY_STRING'])
+    size = $3.to_i
+    r, g, b = $2.scan(/../).map { |i| i.to_i(16) }
 
-    r, g, b = if params.has_key?("color")
-      hex = params['color']
-      unless hex =~ /^[0-9a-fA-F]{6}$/
-        return error(400, "Invalid color specifier")
-      end
-      hex.scan(/../).map { |i| i.to_i(16) }
-    else
-      [params.fetch('r', 0).to_i, params.fetch('g', 0).to_i, params.fetch('b', 0).to_i]
-    end
-
-    size = params.fetch('size', 50).to_i
 
     avatar = LetterAvatar.generate(letter, size, r, g, b)
 

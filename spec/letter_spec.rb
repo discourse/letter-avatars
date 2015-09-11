@@ -40,45 +40,10 @@ describe LetterAvatarApp do
     end
   end
 
-  context "/letter/q" do
-    let(:url) { "/letter/q" }
-
-    context "with no query params" do
-      it_behaves_like "a successful request"
-
-      it "returns an image with the default height" do
-        expect(image.height).to eq(50)
-      end
-
-      it "returns an image with the default width" do
-        expect(image.width).to eq(50)
-      end
-
-      it "has a black background" do
-        expect(image[0, 0]).to eq(255)
-      end
-    end
-
-    context "with an RGB colour" do
-      let(:params) { { 'r' => 10, 'g' => 20, 'b' => 30 } }
-
-      it_behaves_like "a successful request"
-
-      it "returns an image with the default height" do
-        expect(image.height).to eq(50)
-      end
-
-      it "returns an image with the default width" do
-        expect(image.width).to eq(50)
-      end
-
-      it "has a non-standard background" do
-        expect(image[0, 0]).to eq(169090815)
-      end
-    end
+  context "valid letter" do
+    let(:url) { "/letter/q/A1B2C3/50.png" }
 
     context "with a hex colour" do
-      let(:params) { { 'color' => 'A1B2C3' } }
 
       it_behaves_like "a successful request"
 
@@ -95,22 +60,5 @@ describe LetterAvatarApp do
       end
     end
 
-    context "with a size" do
-      let(:params) { { 'size' => 42 } }
-
-      it_behaves_like "a successful request"
-
-      it "returns an image with the custom height" do
-        expect(image.height).to eq(42)
-      end
-
-      it "returns an image with the custom width" do
-        expect(image.width).to eq(42)
-      end
-
-      it "has the standard background" do
-        expect(image[0, 0]).to eq(255)
-      end
-    end
   end
 end
