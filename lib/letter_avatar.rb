@@ -16,7 +16,7 @@ class LetterAvatar
 
       `#{fullsize_command(path, letter, r, g, b)} 2>/dev/null`
       `#{resize_command(path, size)} 2>/dev/null`
-      `optipng -silent #{path} 2>/dev/null`
+      `optipng -strip all -silent #{path} 2>/dev/null`
 
       File.read(path)
     ensure
@@ -34,7 +34,7 @@ class LetterAvatar
         -gravity Center
         -annotate -0+26 '#{letter}'
         -depth 8
-        '#{path}'
+        png8:'#{path}'
       }.join(' ')
     end
 
@@ -49,7 +49,7 @@ class LetterAvatar
         -interpolate bicubic
         -unsharp 2x0.5+0.7+0
         -quality 98
-        '#{path}'
+        png8:'#{path}'
       }.join(' ')
     end
 
