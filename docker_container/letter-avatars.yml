@@ -6,7 +6,7 @@ params:
   home: /var/www/letter-avatars
 
 expose:
-  - "8080:8080"
+  - "8080:80"
 
 volumes:
   - volume:
