@@ -23,6 +23,8 @@ run:
     - exec:
         cmd:
           - useradd web -s /bin/bash -m -U
+    - exec: mkdir -p /shared/cache
+    - exec: chown web /shared/cache
     - exec: mkdir -p /var/www
     - exec: cd /var/www && git clone --depth 1 https://github.com/discourse/letter-avatars.git
     - exec:
