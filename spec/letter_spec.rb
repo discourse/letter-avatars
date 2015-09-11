@@ -56,7 +56,8 @@ describe LetterAvatarApp do
       end
 
       it "has a non-standard background" do
-        expect(image[0, 0]).to eq(2712847359)
+        # we compensate for compression shifting pallette a bit
+        expect(image[0, 0]).to be_between(2712847359, 2864434431)
       end
     end
 
