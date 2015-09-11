@@ -1,0 +1,38 @@
+base_image: "samsaffron/discourse_base:1.0.12"
+
+update_pups: false
+
+params:
+  home: /var/www/letter-avatars
+
+expose:
+  - "8080:8080"
+
+volumes:
+  - volume:
+     host: /var/discourse/shared/letter-avatars
+     guest: /shared
+
+run:
+    - exec:
+        cmd:
+          - useradd web -s /bin/bash -m -U
+    - exec: mkdir -p /var/www
+    - exec: cd /var/www && git clone --depth 1 https://github.com/discourse/letter-avatars.git
+    - exec:
+        cd: $home
+        cmd:
+          - chown -R web $home
+          - mkdir -p /shared/gems
+          - chown -R web /shared/gems
+          - sudo -E -u web bundle install --path=/shared/gems --verbose
+          - sudo -E -u web bundle exec rake
+    - file:
+       path: /etc/service/puma/run
+       chmod: "+x"
+       contents: |
+         #!/bin/bash
+         exec 2>&1
+         cd $home
+         exec sudo -E -u web LD_PRELOAD=/usr/lib/libjemalloc.so.1 bundle exec puma -p 8080 -e production
+
