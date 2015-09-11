@@ -9,7 +9,6 @@ class LetterAvatar
 
     def generate(letter, size, r, g, b)
       size = FULLSIZE if size > FULLSIZE
-      image = nil
 
       Open3.pipeline_r(
         fullsize_command(letter, r, g, b),
@@ -53,5 +52,6 @@ class LetterAvatar
         png:-
       }
     end
+
   end
 end

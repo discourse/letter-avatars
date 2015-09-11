@@ -1,7 +1,11 @@
 require 'rack/utils'
+require 'date'
 require 'letter_avatar'
 
 class LetterAvatarApp
+
+  VERSION = 1
+
   def self.call(env)
     unless env['REQUEST_METHOD'] == 'GET'
       return error(405, "Only GET requests are supported")
@@ -26,10 +30,18 @@ class LetterAvatarApp
 
     size = params.fetch('size', 50).to_i
 
+    avatar = LetterAvatar.generate(letter, size, r, g, b)
+
+    expires = (Time.now.to_date + 720).httpdate
+
     return [200, {
       'Content-Type' => 'image/png',
-      'Cache-Control' => 'max-age=157788000, public'
-    }, [LetterAvatar.generate(letter, size, r, g, b)]]
+      'Cache-Control' => 'public, max-age=157788000',
+      'Content-Length' => avatar.bytesize.to_s,
+      'Last-Modified' => 'Tue, 11 Jan 2000 00:57:26 GMT',
+      'Expires' => expires,
+      'Etag' => "#{letter}#{size}#{r}#{g}#{b}#{VERSION}"
+    }, [avatar]]
   end
 
   def self.error(code, msg)
