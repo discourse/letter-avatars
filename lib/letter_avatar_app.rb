@@ -26,7 +26,10 @@ class LetterAvatarApp
 
     size = params.fetch('size', 50).to_i
 
-    return [200, [['Content-Type', 'image/png']], [LetterAvatar.generate(letter, size, r, g, b)]]
+    return [200, {
+      'Content-Type' => 'image/png',
+      'Cache-Control' => 'max-age=157788000, public'
+    }, [LetterAvatar.generate(letter, size, r, g, b)]]
   end
 
   def self.error(code, msg)
