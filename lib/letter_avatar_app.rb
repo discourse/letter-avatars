@@ -6,13 +6,31 @@ class LetterAvatarApp
 
   VERSION = 1
 
+  STATIC_ASSETS = {
+    '/.well-known/dnt-policy.txt' => File.read(File.dirname(__FILE__) << "/dnt-policy-1.0.txt"),
+    # allow everything so crawlers can download images
+    '/robots.txt' => "User-Agent: *\nAllow: /"
+  }
+
+  def self.static_asset(path)
+    if text = STATIC_ASSETS[path]
+      [200, {
+        'Content-Type' => 'text/plain',
+        'Cache-Control' => 'public, max-age=86400',
+        'Last-Modified' => 'Tue, 11 Jan 2000 00:57:26 GMT',
+        'Content-Length' => text.bytesize.to_s,
+        'Expires' => (Time.now.to_date + 2).httpdate
+      }, [text]]
+    end
+  end
+
   def self.call(env)
     unless env['REQUEST_METHOD'] == 'GET'
       return error(405, "Only GET requests are supported")
     end
 
     unless env['PATH_INFO'] =~ %r{^/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
-      return error(404, "Resource not found")
+      return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
     letter = $1.upcase

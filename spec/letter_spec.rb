@@ -40,6 +40,17 @@ describe LetterAvatarApp do
     end
   end
 
+  context "dnt policy" do
+    let (:url) { "/.well-known/dnt-policy.txt" }
+
+    it "returns a valid policy file" do
+      expect(response.status).to eq(200)
+      expect(response['Content-Type']).to eq("text/plain")
+      # we got to match something in https://www.eff.org/files/dnt-policies.json
+      expect(Digest::SHA1.hexdigest(response.body)).to eq('a18e8dba6848d3fc241b03b88291cb75a3cfec3b')
+    end
+  end
+
   context "valid letter" do
     let(:url) { "/letter/q/A1B2C3/50.png" }
 
