@@ -48,7 +48,7 @@ class LetterAvatar
         xc:'rgb(#{r},#{g},#{b})'
         -pointsize #{POINTSIZE}
         -fill '#FFFFFFCC'
-        -font 'Helvetica'
+        -font 'Roboto-Medium'
         -gravity Center
         -annotate -0+26 '#{letter}'
         -depth 8
