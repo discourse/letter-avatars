@@ -29,16 +29,16 @@ class LetterAvatarApp
       return error(405, "Only GET requests are supported")
     end
 
-    unless env['PATH_INFO'] =~ %r{^/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
+    unless env['PATH_INFO'] =~ %r{^(/v2)?/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
       return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
-    letter = $1.upcase
-    size = $3.to_i
-    r, g, b = $2.scan(/../).map { |i| i.to_i(16) }
+    version = ($1 == "/v2") ? 2 : 1
+    letter = $2.upcase
+    size = $4.to_i
+    r, g, b = $3.scan(/../).map { |i| i.to_i(16) }
 
-
-    avatar = LetterAvatar.generate(letter, size, r, g, b)
+    avatar = LetterAvatar.generate(letter, size, r, g, b, version)
 
     expires = (Time.now.to_date + 720).httpdate
 

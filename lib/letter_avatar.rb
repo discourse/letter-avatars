@@ -8,12 +8,12 @@ class LetterAvatar
 
   class << self
 
-    def generate(letter, size, r, g, b)
+    def generate(letter, size, r, g, b, version = 1)
 
       size = FULLSIZE if size > FULLSIZE
 
-      fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full.png")
-      resized_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/#{size}.png")
+      fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full_v#{version}.png")
+      resized_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/#{size}_v#{version}.png")
 
       return File.read(resized_path) if File.exist? resized_path
 
@@ -22,7 +22,7 @@ class LetterAvatar
       if File.exist? fullsize_path
         FileUtils.cp(fullsize_path, temp_file_path)
       else
-        `#{fullsize_command(temp_file_path, letter, r, g, b)} 2>/dev/null`
+        `#{fullsize_command(temp_file_path, letter, r, g, b, version)} 2>/dev/null`
         FileUtils.cp(temp_file_path, temp_file_path + "1")
         FileUtils.mkdir_p(File.dirname(fullsize_path))
         FileUtils.mv(temp_file_path + "1", fullsize_path)
@@ -39,7 +39,17 @@ class LetterAvatar
       "#{ENV["TEMP_FILE_PATH"] || "/tmp"}#{path}"
     end
 
-    def fullsize_command(path, letter, r, g, b)
+    def fullsize_command(path, letter, r, g, b, version)
+      font, offsets = if version == 1
+        ["Helvetica", Hash.new('-0+26')]
+      else
+        offset_hash = Hash.new('-0+0')
+        offset_hash['D'] = '+12+0'
+        offset_hash['P'] = '+6+0'
+
+        ["Roboto-Medium", offset_hash]
+      end
+
       %W{
         convert
         -dither None
@@ -48,9 +58,9 @@ class LetterAvatar
         xc:'rgb(#{r},#{g},#{b})'
         -pointsize #{POINTSIZE}
         -fill '#FFFFFFCC'
-        -font 'Roboto-Medium'
+        -font '#{font}'
         -gravity Center
-        -annotate -0+26 '#{letter}'
+        -annotate #{offsets[letter]} '#{letter}'
         -depth 8
         -dither None
         -colors 128
