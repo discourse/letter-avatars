@@ -46,6 +46,12 @@ class LetterAvatar
         offset_hash = Hash.new('-0+0')
         offset_hash['D'] = '+12+0'
         offset_hash['P'] = '+6+0'
+        offset_hash['Q'] = '+0-6'
+        offset_hash['T'] = '+0+12'
+        offset_hash['V'] = '+0+6'
+        offset_hash['W'] = '+0+12'
+        offset_hash['Y'] = '+0+6'
+        offset_hash['7'] = '+6+12'
 
         ["Roboto-Medium", offset_hash]
       end
