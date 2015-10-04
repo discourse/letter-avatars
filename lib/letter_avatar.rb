@@ -44,6 +44,7 @@ class LetterAvatar
         ["Helvetica", Hash.new('-0+26')]
       else
         offset_hash = Hash.new('-0+0')
+        offset_hash['B'] = '+6+0'
         offset_hash['D'] = '+12+0'
         offset_hash['P'] = '+6+0'
         offset_hash['Q'] = '+0-6'
