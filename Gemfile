@@ -2,6 +2,8 @@ source 'https://rubygems.org/'
 
 gem 'rack'
 gem 'puma'
+gem 'rack-logstasher'
+gem 'logstash-logger'
 
 group 'test' do
   gem 'bundler'
