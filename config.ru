@@ -7,6 +7,8 @@ if ENV['LOGSTASH_SERVER_URL']
   require 'uri'
   logstash_url = URI(ENV['LOGSTASH_SERVER_URL'])
 
+  puts "* Logging all requests to logstash server at #{logstash_url}"
+
   use Rack::Logstasher::Logger,
       LogStashLogger.new(
         type: logstash_url.scheme,
