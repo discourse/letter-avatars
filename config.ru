@@ -2,19 +2,11 @@ $:.unshift File.dirname(__FILE__) << "/lib"
 require 'rack'
 
 if ENV['LOGSTASH_SERVER_URL']
-  require 'rack/logstasher'
-  require 'logstash-logger'
-  require 'uri'
-  logstash_url = URI(ENV['LOGSTASH_SERVER_URL'])
+  require 'rack/logstash'
 
-  puts "* Logging all requests to logstash server at #{logstash_url}"
+  puts "* Logging all requests to logstash server at #{ENV['LOGSTASH_SERVER_URL']}"
 
-  use Rack::Logstasher::Logger,
-      LogStashLogger.new(
-        type: logstash_url.scheme,
-        host: logstash_url.host,
-        port: logstash_url.port
-      )
+  use Rack::Logstash, ENV['LOGSTASH_SERVER_URL'], tags: %w{letter-avatars}
 end
 
 require 'letter_avatar_app'

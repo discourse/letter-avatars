@@ -34,10 +34,6 @@ GEM
       celluloid (~> 0.16.0)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-    logstash-event (1.2.02)
-    logstash-logger (0.15.1)
-      logstash-event (~> 1.2)
-      stud
     lumberjack (1.0.9)
     method_source (0.8.2)
     nenv (0.2.0)
@@ -50,9 +46,7 @@ GEM
       slop (~> 3.4)
     puma (2.13.4)
     rack (1.6.4)
-    rack-logstasher (0.0.3)
-      logstash-event
-      rack
+    rack-logstash (0.1.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rake (10.4.2)
@@ -75,7 +69,6 @@ GEM
     shellany (0.0.1)
     slop (3.6.0)
     spork (0.9.2)
-    stud (0.0.22)
     thor (0.19.1)
     timers (4.0.1)
       hitimes
@@ -88,10 +81,9 @@ DEPENDENCIES
   chunky_png
   guard-rspec
   guard-spork
-  logstash-logger
   puma
   rack
-  rack-logstasher
+  rack-logstash
   rack-test
   rake (~> 10.4, >= 10.4.2)
   rb-inotify (~> 0.9)
