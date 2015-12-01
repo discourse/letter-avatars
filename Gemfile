@@ -2,7 +2,7 @@ source 'https://rubygems.org/'
 
 gem 'rack'
 gem 'puma'
-gem 'rack-logstash'
+gem 'rack-logstash', '~> 0.2'
 
 group 'test' do
   gem 'bundler'
