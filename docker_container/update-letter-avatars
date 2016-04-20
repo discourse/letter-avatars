@@ -1,9 +1,0 @@
-#!/bin/bash
-
-result=`cd /src/letter-avatars && git pull | grep "Already up-to-date"`
-
-if [ -z "$result" ]; then
-   echo "updating..."
-   cd /var/discourse && ./launcher bootstrap letter-avatars && ./launcher destroy letter-avatars && ./launcher start letter-avatars
-fi
-

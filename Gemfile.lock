@@ -46,7 +46,7 @@ GEM
       slop (~> 3.4)
     puma (2.13.4)
     rack (1.6.4)
-    rack-logstash (0.2.0)
+    rack-logstash (0.2.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rake (10.4.2)
