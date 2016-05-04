@@ -37,15 +37,15 @@ RUN build_deps="git build-base autoconf automake libtool" \
 	&& apk del $build_deps \
 	&& rm -rf /var/cache/apk/* /tmp/libpng
 
-RUN build_deps="build-base libtool freetype-dev xz-dev bzip2-dev tiff-dev libjpeg-turbo-dev ghostscript ghostscript-dev" \
-	&& mkdir /tmp/imagemagick \
-	&& cd /tmp/imagemagick \
-	&& wget -O ImageMagick.tar.gz "http://www.imagemagick.org/download/ImageMagick.tar.gz" \
-	&& IMDIR=$(tar -tzf ImageMagick.tar.gz |head -n 1 | cut -d / -f 1) \
-	&& tar -xzf ImageMagick.tar.gz \
-	&& cd $IMDIR \
+ENV IMAGEMAGICK_VERSION 6.9.3-10
+RUN build_deps="build-base libtool freetype-dev xz xz-dev bzip2-dev tiff-dev libjpeg-turbo-dev ghostscript ghostscript-dev" \
 	&& apk update \
 	&& apk add $build_deps \
+	&& mkdir /tmp/imagemagick \
+	&& cd /tmp/imagemagick \
+	&& wget -O ImageMagick.tar.xz "http://www.imagemagick.org/download/releases/ImageMagick-${IMAGEMAGICK_VERSION}.tar.xz" \
+	&& xz -cd ImageMagick.tar.xz | tar -xf - \
+	&& cd ImageMagick-${IMAGEMAGICK_VERSION} \
 	&& LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include ./configure \
 	   --prefix=$PREFIX \
 	   --enable-static \
@@ -72,6 +72,8 @@ RUN build_deps="build-base libtool freetype-dev xz-dev bzip2-dev tiff-dev libjpe
 	&& apk del $build_deps \
 	&& apk add freetype xz-libs libbz2 libgcc libgomp libltdl tiff libjpeg-turbo ghostscript-fonts \
 	&& rm -rf /var/cache/apk/* /tmp/imagemagick
+
+ADD policy.xml /usr/local/etc/ImageMagick-6/
 
 RUN apk update \
 	&& apk add git sudo build-base \
