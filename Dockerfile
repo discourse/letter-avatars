@@ -88,4 +88,4 @@ RUN apk update \
 	&& apk del git build-base \
 	&& rm -rf /var/cache/apk/*
 
-ENTRYPOINT ["/usr/bin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec puma -p 8080 -b :: -e production"]
+ENTRYPOINT ["/usr/bin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec puma -b 'tcp://[::]:8080' -e production"]
