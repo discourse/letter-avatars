@@ -77,6 +77,7 @@ ADD policy.xml /usr/local/etc/ImageMagick-6/
 
 ADD Gemfile /var/www/letter-avatars/Gemfile
 ADD Gemfile.lock /var/www/letter-avatars/Gemfile.lock
+ADD Roboto-Medium /var/www/letter-avatars/Roboto-Medium
 
 RUN apk update \
 	&& apk add git sudo build-base \
