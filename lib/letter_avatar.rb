@@ -9,7 +9,6 @@ class LetterAvatar
   class << self
 
     def generate(letter, size, r, g, b, version = 1)
-
       size = FULLSIZE if size > FULLSIZE
 
       fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full_v#{version}.png")
@@ -39,23 +38,47 @@ class LetterAvatar
       "#{ENV["TEMP_FILE_PATH"] || "/tmp"}#{path}"
     end
 
-    def fullsize_command(path, letter, r, g, b, version)
-      font, offsets = if version == 1
-        ["Helvetica", Hash.new('-0+26')]
-      else
-        offset_hash = Hash.new('-0+0')
-        offset_hash['B'] = '+6+0'
-        offset_hash['D'] = '+12+0'
-        offset_hash['P'] = '+6+0'
-        offset_hash['Q'] = '+0-6'
-        offset_hash['T'] = '+0+12'
-        offset_hash['V'] = '+0+6'
-        offset_hash['W'] = '+0+12'
-        offset_hash['Y'] = '+0+6'
-        offset_hash['7'] = '+6+12'
+    def v1
+      @v1 ||= ["Helvetica", Hash.new('-0+26')]
+    end
 
-        ["Roboto-Medium", offset_hash]
+    def v2
+      @v2 ||= begin
+        offsets = Hash.new('-0+0')
+        offsets['0'] = '+6+0'
+        offsets['1'] = '+2+0'
+        offsets['6'] = '+4+0'
+        offsets['8'] = '+6+0'
+        offsets['9'] = '+4+0'
+        offsets['A'] = '+1+0'
+        offsets['B'] = '+12+0'
+        offsets['D'] = '+12+0'
+        offsets['H'] = '+10+0'
+        offsets['I'] = '+10+0'
+        offsets['K'] = '+10+0'
+        offsets['M'] = '+10+0'
+        offsets['N'] = '+10+0'
+        offsets['O'] = '+8+0'
+        offsets['P'] = '+12+0'
+        offsets['Q'] = '+8+0'
+        offsets['R'] = '+10+0'
+        offsets['T'] = '+4+0'
+        offsets['U'] = '+10+0'
+        offsets['V'] = '+1+0'
+        offsets['W'] = '+2+0'
+        offsets['X'] = '+2+0'
+        offsets['Y'] = '+2+0'
+        ["Roboto-Medium", offsets]
       end
+    end
+
+    def fullsize_command(path, letter, r, g, b, version)
+      font, offsets = version == 1 ? v1 : v2
+
+      # NOTE: to debug alignment issues, add these lignes before the path
+      # -fill '#00F'
+      # -draw "line 0,#{FULLSIZE/2} #{FULLSIZE},#{FULLSIZE/2}"
+      # -draw "line #{FULLSIZE/2},0 #{FULLSIZE/2},#{FULLSIZE}"
 
       %W{
         convert
