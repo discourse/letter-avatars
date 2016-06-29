@@ -1,4 +1,4 @@
-FROM ruby:2.2-alpine
+FROM ruby:2.3.1-alpine
 
 ENV PREFIX /usr/local
 
@@ -37,7 +37,7 @@ RUN build_deps="git build-base autoconf automake libtool" \
 	&& apk del $build_deps \
 	&& rm -rf /var/cache/apk/* /tmp/libpng
 
-ENV IMAGEMAGICK_VERSION 6.9.3-10
+ENV IMAGEMAGICK_VERSION 6.9.4-10
 RUN build_deps="build-base libtool freetype-dev xz xz-dev bzip2-dev tiff-dev libjpeg-turbo-dev ghostscript ghostscript-dev" \
 	&& apk update \
 	&& apk add $build_deps \
@@ -75,17 +75,19 @@ RUN build_deps="build-base libtool freetype-dev xz xz-dev bzip2-dev tiff-dev lib
 
 ADD policy.xml /usr/local/etc/ImageMagick-6/
 
+ADD Gemfile /var/www/letter-avatars/Gemfile
+ADD Gemfile.lock /var/www/letter-avatars/Gemfile.lock
+
 RUN apk update \
 	&& apk add git sudo build-base \
 	&& adduser -s /bin/bash -u 9001 -D web \
-	&& mkdir -p /var/www \
-	&& cd /var/www \
-	&& git clone --depth 1 https://github.com/discourse/letter-avatars.git \
 	&& cd /var/www/letter-avatars \
 	&& chown -R web . \
 	&& sudo -E -u web bundle install --deployment --verbose \
-	&& sudo -E -u web bundle exec rake \
 	&& apk del git build-base \
 	&& rm -rf /var/cache/apk/*
+
+ADD config.ru /var/www/letter-avatars/config.ru
+ADD lib /var/www/letter-avatars/lib
 
 ENTRYPOINT ["/usr/bin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec puma -b 'tcp://[::]:8080' -e production"]
