@@ -91,4 +91,4 @@ RUN apk update \
 ADD config.ru /var/www/letter-avatars/config.ru
 ADD lib /var/www/letter-avatars/lib
 
-ENTRYPOINT ["/usr/bin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec puma -b 'tcp://[::]:8080' -e production"]
+ENTRYPOINT ["/sbin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec puma -b 'tcp://[::]:8080' -e production"]

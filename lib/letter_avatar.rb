@@ -8,13 +8,17 @@ class LetterAvatar
 
   class << self
 
-    def generate(letter, size, r, g, b, version = 1)
+    def generate(letter, size, r,g,b, version = 1)
+      File.read(generate_path(letter,size, r,g,b, version))
+    end
+
+    def generate_path(letter, size, r, g, b, version = 1)
       size = FULLSIZE if size > FULLSIZE
 
       fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full_v#{version}.png")
       resized_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/#{size}_v#{version}.png")
 
-      return File.read(resized_path) if File.exist? resized_path
+      return resized_path if File.exist? resized_path
 
       temp_file_path = temp_path("/" << SecureRandom.hex << ".png")
 
@@ -31,7 +35,8 @@ class LetterAvatar
       `pngout #{temp_file_path} 2>/dev/null`
 
       FileUtils.mv(temp_file_path, resized_path)
-      File.read(resized_path)
+
+      resized_path
     end
 
     def temp_path(path)
