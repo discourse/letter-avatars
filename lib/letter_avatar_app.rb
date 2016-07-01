@@ -4,7 +4,7 @@ require 'letter_avatar'
 
 class LetterAvatarApp
 
-  VERSION = 1
+  VERSION = 3
 
   STATIC_ASSETS = {
     '/.well-known/dnt-policy.txt' => File.read(File.dirname(__FILE__) << "/dnt-policy-1.0.txt"),
@@ -29,14 +29,20 @@ class LetterAvatarApp
       return error(405, "Only GET requests are supported")
     end
 
-    unless env['PATH_INFO'] =~ %r{^(/v2)?/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
+    unless env['PATH_INFO'] =~ %r{^(/v(\d+))?/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
       return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
-    version = ($1 == "/v2") ? 2 : 1
-    letter = $2.upcase
-    size = $4.to_i
-    r, g, b = $3.scan(/../).map { |i| i.to_i(16) }
+
+    version = ($2 || 1).to_i
+
+    if version > VERSION
+      return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
+    end
+
+    letter = $3.upcase
+    size = $5.to_i
+    r, g, b = $4.scan(/../).map { |i| i.to_i(16) }
 
     avatar_path = LetterAvatar.generate_path(letter, size, r, g, b, version)
 
