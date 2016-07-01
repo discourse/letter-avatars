@@ -1,19 +1,19 @@
 version: '2'
 
 services:
-  web:
+  letter-avatars-app:
     build: .
     volumes:
-      - ./cache:/var/www/letter-avatars/cache
+      - ./cache:/letter-avatars
     environment:
-      - TEMP_FILE_PATH=/var/www/letter-avatars/cache
+      - TEMP_FILE_PATH=/letter-avatars/app-cache
     expose:
       - "8080"
-  nginx:
+  letter-avatars-nginx:
     build: ./nginx
     volumes:
-      - ./cache:/var/www/letter-avatars/cache
+      - ./cache:/letter-avatars
     links:
-      - web
+      - letter-avatars-app
     ports:
       - "82:80"
