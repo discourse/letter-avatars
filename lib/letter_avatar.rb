@@ -18,11 +18,13 @@ class LetterAvatar
       fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full_v#{version}.png")
       resized_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/#{size}_v#{version}.png")
 
-      return resized_path if File.exist? resized_path
+      return resized_path if File.exist?(resized_path)
 
       temp_file_path = temp_path("/" << SecureRandom.hex << ".png")
+      temp_file_dir = File.dirname(temp_file_path)
+      FileUtils.mkdir_p(temp_file_dir) unless Dir.exists?(temp_file_dir)
 
-      if File.exist? fullsize_path
+      if File.exist?(fullsize_path)
         FileUtils.cp(fullsize_path, temp_file_path)
       else
         `#{fullsize_command(temp_file_path, letter, r, g, b, version)} 2>/dev/null`
@@ -49,30 +51,39 @@ class LetterAvatar
 
     def v2
       @v2 ||= begin
-        offsets = Hash.new('-0+0')
-        offsets['0'] = '+6+0'
-        offsets['1'] = '+2+0'
-        offsets['6'] = '+4+0'
-        offsets['8'] = '+6+0'
-        offsets['9'] = '+4+0'
-        offsets['A'] = '+1+0'
-        offsets['B'] = '+12+0'
-        offsets['D'] = '+12+0'
-        offsets['H'] = '+10+0'
-        offsets['I'] = '+10+0'
-        offsets['K'] = '+10+0'
-        offsets['M'] = '+10+0'
-        offsets['N'] = '+10+0'
-        offsets['O'] = '+8+0'
-        offsets['P'] = '+12+0'
-        offsets['Q'] = '+8+0'
-        offsets['R'] = '+10+0'
-        offsets['T'] = '+4+0'
-        offsets['U'] = '+10+0'
-        offsets['V'] = '+1+0'
-        offsets['W'] = '+2+0'
-        offsets['X'] = '+2+0'
-        offsets['Y'] = '+2+0'
+        offsets = Hash.new('-0+5')
+        offsets['0'] = '+6+5'
+        offsets['1'] = '+6+5'
+        offsets['2'] = '+6+5'
+        offsets['6'] = '+4+5'
+        offsets['7'] = '+8+5'
+        offsets['8'] = '+6+5'
+        offsets['9'] = '+4+5'
+        offsets['A'] = '+1+5'
+        offsets['B'] = '+12+5'
+        offsets['C'] = '+8+5'
+        offsets['D'] = '+12+5'
+        offsets['E'] = '+4+5'
+        offsets['F'] = '+6+5'
+        offsets['G'] = '+8+5'
+        offsets['H'] = '+10+5'
+        offsets['I'] = '+12+5'
+        offsets['J'] = '+8+5'
+        offsets['K'] = '+10+5'
+        offsets['L'] = '+8+5'
+        offsets['M'] = '+10+5'
+        offsets['N'] = '+10+5'
+        offsets['O'] = '+8+5'
+        offsets['P'] = '+12+5'
+        offsets['Q'] = '+8+5'
+        offsets['R'] = '+12+5'
+        offsets['T'] = '+4+5'
+        offsets['U'] = '+10+5'
+        offsets['V'] = '+1+5'
+        offsets['W'] = '+2+5'
+        offsets['X'] = '+2+5'
+        offsets['Y'] = '+2+5'
+        offsets['Z'] = '+8+5'
         ["Roboto-Medium", offsets]
       end
     end
@@ -82,11 +93,16 @@ class LetterAvatar
 
       # NOTE: to debug alignment issues, add these lignes before the path
       # -fill '#00F'
+      # -draw "line 0,#{FULLSIZE/2 + FULLSIZE/4} #{FULLSIZE},#{FULLSIZE/2 + FULLSIZE/4}"
       # -draw "line 0,#{FULLSIZE/2} #{FULLSIZE},#{FULLSIZE/2}"
+      # -draw "line 0,#{FULLSIZE/4} #{FULLSIZE},#{FULLSIZE/4}"
+      # -draw "line #{FULLSIZE/2 + FULLSIZE/4},0 #{FULLSIZE/2 + FULLSIZE/4},#{FULLSIZE}"
       # -draw "line #{FULLSIZE/2},0 #{FULLSIZE/2},#{FULLSIZE}"
+      # -draw "line #{FULLSIZE/4},0 #{FULLSIZE/4},#{FULLSIZE}"
 
       %W{
         convert
+        -depth 8
         -dither None
         -colors 128
         -size #{FULLSIZE}x#{FULLSIZE}
@@ -96,9 +112,6 @@ class LetterAvatar
         -font '#{font}'
         -gravity Center
         -annotate #{offsets[letter]} '#{letter}'
-        -depth 8
-        -dither None
-        -colors 128
         '#{path}'
       }.join(' ')
     end
