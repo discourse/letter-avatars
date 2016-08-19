@@ -91,7 +91,7 @@ class LetterAvatar
     def fullsize_command(path, letter, r, g, b, version)
       font, offsets = version == 1 ? v1 : v2
 
-      # NOTE: to debug alignment issues, add these lignes before the path
+      # NOTE: to debug alignment issues, add these lines before the path
       # -fill '#00F'
       # -draw "line 0,#{FULLSIZE/2 + FULLSIZE/4} #{FULLSIZE},#{FULLSIZE/2 + FULLSIZE/4}"
       # -draw "line 0,#{FULLSIZE/2} #{FULLSIZE},#{FULLSIZE/2}"
