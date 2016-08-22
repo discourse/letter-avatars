@@ -1,7 +1,7 @@
 source 'https://rubygems.org/'
 
 gem 'rack'
-gem 'puma'
+gem 'unicorn'
 gem 'rack-logstash', '~> 0.2'
 
 group 'test' do

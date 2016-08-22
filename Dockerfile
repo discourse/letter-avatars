@@ -80,7 +80,7 @@ ADD Gemfile.lock /var/www/letter-avatars/Gemfile.lock
 ADD Roboto-Medium /var/www/letter-avatars/Roboto-Medium
 
 RUN apk update \
-	&& apk add git sudo build-base \
+	&& apk add git sudo build-base linux-headers \
 	&& adduser -s /bin/bash -u 9001 -D web \
 	&& cd /var/www/letter-avatars \
 	&& chown -R web . \
@@ -90,5 +90,6 @@ RUN apk update \
 
 ADD config.ru /var/www/letter-avatars/config.ru
 ADD lib /var/www/letter-avatars/lib
+ADD unicorn.conf.rb /var/www/letter-avatars/unicorn.conf.rb
 
-ENTRYPOINT ["/sbin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec puma -b 'tcp://[::]:8080' -e production"]
+ENTRYPOINT ["/sbin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec unicorn -E production -c /var/www/letter-avatars/unicorn.conf.rb"]
