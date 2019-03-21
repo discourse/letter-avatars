@@ -33,7 +33,6 @@ class LetterAvatarApp
       return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
-
     version = ($2 || 1).to_i
 
     if version > VERSION
@@ -61,7 +60,7 @@ class LetterAvatarApp
 
     if env["HTTP_X_SENDFILE_TYPE"] == "X-Accel-Redirect" && (mapping = env["HTTP_X_ACCEL_MAPPING"])
 
-      from,to = mapping.split("=")
+      from, to = mapping.split("=")
       if (from && to)
         avatar_path.sub!(from, to)
       end

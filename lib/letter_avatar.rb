@@ -8,8 +8,8 @@ class LetterAvatar
 
   class << self
 
-    def generate(letter, size, r,g,b, version = 1)
-      File.read(generate_path(letter,size, r,g,b, version))
+    def generate(letter, size, r, g, b, version = 1)
+      File.read(generate_path(letter, size, r, g, b, version))
     end
 
     def generate_path(letter, size, r, g, b, version = 1)
@@ -116,7 +116,7 @@ class LetterAvatar
       }.join(' ')
     end
 
-    def resize_command(path,size)
+    def resize_command(path, size)
       %W{
         convert
         '#{path}'

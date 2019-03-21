@@ -74,7 +74,6 @@ describe LetterAvatarApp do
 
   end
 
-
   context "valid number" do
     let(:url) { "/letter/8/123456/25.png" }
 
