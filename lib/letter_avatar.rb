@@ -109,6 +109,12 @@ class LetterAvatar
             'NotoSansArabic-Medium.ttf'
           when 'devaganari'
             'NotoSansDevanagari-Medium.ttf'
+          when 'bengali'
+            'NotoSansBengali-Medium.ttf'
+          when 'javanese'
+            'NotoSansJavanese-Regular.ttf'
+          when 'telugu'
+            'NotoSansTelugu-Regular.ttf'
           end
       end
 

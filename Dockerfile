@@ -88,6 +88,9 @@ ADD NotoSansMono-Medium.ttf /var/www/letter-avatars/NotoSansMono-Medium.ttf
 ADD NotoSansMonoCJKsc-Regular.otf /var/www/letter-avatars/NotoSansMonoCJKsc-Regular.otf
 ADD NotoSansArabic-Medium.ttf /var/www/letter-avatars/NotoSansArabic-Medium.ttf
 ADD NotoSansDevanagari-Medium.ttf /var/www/letter-avatars/NotoSansDevanagari-Medium.ttf
+ADD NotoSansBengali-Medium.ttf /var/www/letter-avatars/NotoSansBengali-Medium.ttf
+ADD NotoSansJavanese-Regular.ttf /var/www/letter-avatars/NotoSansJavanese-Regular.ttf
+ADD NotoSansTelugu-Regular.ttf /var/www/letter-avatars/NotoSansTelugu-Regular.ttf
 
 RUN adduser -s /bin/bash -u 9001 -D web \
 	&& cd /var/www/letter-avatars \
