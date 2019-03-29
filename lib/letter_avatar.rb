@@ -12,7 +12,7 @@ class LetterAvatar
       File.read(generate_path(letter, size, r, g, b, version))
     end
 
-    def generate_path(letter, size, r, g, b, version = 1)
+    def generate_path(letter, size, r, g, b, version = 1, char_type)
       size = FULLSIZE if size > FULLSIZE
 
       fullsize_path = temp_path("/#{letter}/#{r}/#{g}_#{b}/full_v#{version}.png")
@@ -27,7 +27,7 @@ class LetterAvatar
       if File.exist?(fullsize_path)
         FileUtils.cp(fullsize_path, temp_file_path)
       else
-        `#{fullsize_command(temp_file_path, letter, r, g, b, version)} 2>/dev/null`
+        `#{fullsize_command(temp_file_path, letter, r, g, b, version, char_type)} 2>/dev/null`
         FileUtils.cp(temp_file_path, temp_file_path + "1")
         FileUtils.mkdir_p(File.dirname(fullsize_path))
         FileUtils.mv(temp_file_path + "1", fullsize_path)
@@ -88,8 +88,29 @@ class LetterAvatar
       end
     end
 
-    def fullsize_command(path, letter, r, g, b, version)
-      font, offsets = version == 1 ? v1 : v2
+    def v4
+      @v4 ||= begin
+        offsets = Hash.new('-0+0')
+        ["NotoSansMono-Medium", offsets]
+      end
+    end
+
+    def fullsize_command(path, letter, r, g, b, version, char_type)
+      versions = {1 => v1, 2 => v2, 3 => v2, 4 => v4}
+      font, offsets = versions[version]
+
+      if version > 3
+        font = case char_type
+          when 'latin'
+            'NotoSansMono-Medium.ttf'
+          when 'cjk'
+            'NotoSansMonoCJKsc-Regular.otf'
+          when 'arabic'
+            'NotoSansArabic-Medium.ttf'
+          when 'devaganari'
+            'NotoSansDevanagari-Medium.ttf'
+          end
+      end
 
       # NOTE: to debug alignment issues, add these lines before the path
       # -fill '#00F'

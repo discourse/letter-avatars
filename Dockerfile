@@ -1,50 +1,58 @@
-FROM ruby:2.3.1-alpine
+FROM ruby:2.6.2-alpine
 
 ENV PREFIX /usr/local
 
-RUN apk add --update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ tini \
-	&& rm -rf /var/cache/apk/*
-
-ENV PNGOUT_VERSION pngout-20150319-linux-static
-RUN mkdir /tmp/pngout \
-	&& cd /tmp/pngout \
-	&& wget -O pngout.tgz http://static.jonof.id.au/dl/kenutils/$PNGOUT_VERSION.tar.gz \
-	&& tar -xzf pngout.tgz \
-	&& mv $PNGOUT_VERSION/i686/pngout-static /usr/bin/pngout \
-	&& rm -rf /tmp/pngout
+RUN apk add \
+	autoconf \
+	automake \
+	build-base \
+	bzip2-dev \
+	freetype \
+	freetype-dev \
+	ghostscript \
+	ghostscript-dev \
+	ghostscript-fonts \
+	git \
+	libbz2 \
+	libgcc \
+	libgomp \
+	libjpeg-turbo \
+	libjpeg-turbo-dev \
+	libltdl \
+	libtool \
+	linux-headers \
+	sudo \
+	tiff \
+	tiff-dev \
+	tini \
+	xz \
+	xz-dev \
+	xz-libs
 
 RUN mkdir /tmp/jemalloc	\
 	&& cd /tmp/jemalloc \
-	&& wget http://www.canonware.com/download/jemalloc/jemalloc-3.6.0.tar.bz2 \
+	&& wget https://github.com/jemalloc/jemalloc/releases/download/3.6.0/jemalloc-3.6.0.tar.bz2 \
 	&& tar -xjf jemalloc-3.6.0.tar.bz2 && cd jemalloc-3.6.0 \
-	&& apk update \
-	&& apk add build-base \
 	&& ./configure \
 	&& make -j \
 	&& mv lib/libjemalloc.so.1 /usr/lib \
-	&& apk del build-base \
-	&& rm -rf /var/cache/apk/* /tmp/jemalloc
+	&& rm -rf /tmp/jemalloc
 
-RUN build_deps="git build-base autoconf automake libtool" \
-	&& apk update \
-	&& apk add $build_deps \
-	&& git clone -b v1.6.19 git://git.code.sf.net/p/libpng/code /tmp/libpng \
+ENV LIBPNG_VERSION 1.6.36
+RUN mkdir /tmp/libpng \
+	&& wget http://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.gz?downlolad -O /tmp/libpng/libpng.tar.gz \
 	&& cd /tmp/libpng \
-	&& ./autogen.sh \
+	&& tar -xzvf /tmp/libpng/libpng.tar.gz \
+	&& cd libpng-$LIBPNG_VERSION \
 	&& ./configure --prefix=$PREFIX \
-	&& make -j all \
-	&& make install \
-	&& apk del $build_deps \
-	&& rm -rf /var/cache/apk/* /tmp/libpng
+	&& make all && make install \
+	&& rm -rf /tmp/libpng
 
-ENV IMAGEMAGICK_VERSION 6.9.4-10
-RUN build_deps="build-base libtool freetype-dev xz xz-dev bzip2-dev tiff-dev libjpeg-turbo-dev ghostscript ghostscript-dev" \
-	&& apk update \
-	&& apk add $build_deps \
-	&& mkdir /tmp/imagemagick \
+ENV IMAGEMAGICK_VERSION 7.0.8-35
+RUN mkdir /tmp/imagemagick \
 	&& cd /tmp/imagemagick \
-	&& wget -O ImageMagick.tar.xz "http://www.imagemagick.org/download/releases/ImageMagick-${IMAGEMAGICK_VERSION}.tar.xz" \
-	&& xz -cd ImageMagick.tar.xz | tar -xf - \
+	&& wget -O ImageMagick.tar.gz "https://imagemagick.org/download/ImageMagick-$IMAGEMAGICK_VERSION.tar.gz" \
+	&& tar zxf ImageMagick.tar.gz \
 	&& cd ImageMagick-${IMAGEMAGICK_VERSION} \
 	&& LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include ./configure \
 	   --prefix=$PREFIX \
@@ -69,27 +77,41 @@ RUN build_deps="build-base libtool freetype-dev xz xz-dev bzip2-dev tiff-dev lib
 	   --with-tiff \
 	&& make -j all \
 	&& make -j install \
-	&& apk del $build_deps \
-	&& apk add freetype xz-libs libbz2 libgcc libgomp libltdl tiff libjpeg-turbo ghostscript-fonts \
-	&& rm -rf /var/cache/apk/* /tmp/imagemagick
+	&& rm -rf /tmp/imagemagick
 
-ADD policy.xml /usr/local/etc/ImageMagick-6/
+ADD policy.xml /usr/local/etc/ImageMagick-7/
 
 ADD Gemfile /var/www/letter-avatars/Gemfile
 ADD Gemfile.lock /var/www/letter-avatars/Gemfile.lock
 ADD Roboto-Medium /var/www/letter-avatars/Roboto-Medium
+ADD NotoSansMono-Medium.ttf /var/www/letter-avatars/NotoSansMono-Medium.ttf
+ADD NotoSansMonoCJKsc-Regular.otf /var/www/letter-avatars/NotoSansMonoCJKsc-Regular.otf
+ADD NotoSansArabic-Medium.ttf /var/www/letter-avatars/NotoSansArabic-Medium.ttf
+ADD NotoSansDevanagari-Medium.ttf /var/www/letter-avatars/NotoSansDevanagari-Medium.ttf
 
-RUN apk update \
-	&& apk add git sudo build-base linux-headers \
-	&& adduser -s /bin/bash -u 9001 -D web \
+RUN adduser -s /bin/bash -u 9001 -D web \
 	&& cd /var/www/letter-avatars \
 	&& chown -R web . \
-	&& sudo -E -u web bundle install --deployment --verbose \
-	&& apk del git build-base \
-	&& rm -rf /var/cache/apk/*
+	&& sudo -E -u web bundle install --deployment --verbose
 
 ADD config.ru /var/www/letter-avatars/config.ru
 ADD lib /var/www/letter-avatars/lib
 ADD unicorn.conf.rb /var/www/letter-avatars/unicorn.conf.rb
+
+RUN apk del \
+	autoconf \
+	automake \
+	build-base \
+	bzip2-dev \
+	freetype-dev \
+	ghostscript \
+	ghostscript-dev \
+	git \
+	libjpeg-turbo-dev \
+	libtool \
+	tiff-dev \
+	xz \
+	xz-dev \
+	&& rm -rf /var/cache/apk/*
 
 ENTRYPOINT ["/sbin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec unicorn -E production -c /var/www/letter-avatars/unicorn.conf.rb"]

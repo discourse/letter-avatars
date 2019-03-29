@@ -1,10 +1,12 @@
 require 'rack/utils'
 require 'date'
 require 'letter_avatar'
+require 'cgi'
+require 'unicode_ranges'
 
 class LetterAvatarApp
 
-  VERSION = 3
+  VERSION = 4
 
   STATIC_ASSETS = {
     '/.well-known/dnt-policy.txt' => File.read(File.dirname(__FILE__) << "/dnt-policy-1.0.txt"),
@@ -29,7 +31,7 @@ class LetterAvatarApp
       return error(405, "Only GET requests are supported")
     end
 
-    unless env['PATH_INFO'] =~ %r{^(/v(\d+))?/letter/(\w)/([0-9A-Fa-f]{6})/(\d+)\.png$}
+    unless env['PATH_INFO'] =~ %r{^(/v(\d+))?/letter/([%\w.\-]+?)/([0-9A-Fa-f]{6})/(\d+)\.png$}
       return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
@@ -39,11 +41,18 @@ class LetterAvatarApp
       return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
-    letter = $3.upcase
+    letter = CGI::unescape($3).unicode_normalize.chr.upcase
+
+    char_type = UnicodeRanges.detect_character_type(letter)
+
+    if char_type == 'none'
+      return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
+    end
+
     size = $5.to_i
     r, g, b = $4.scan(/../).map { |i| i.to_i(16) }
 
-    avatar_path = LetterAvatar.generate_path(letter, size, r, g, b, version)
+    avatar_path = LetterAvatar.generate_path(letter, size, r, g, b, version, char_type)
 
     expires = (Time.now.to_date + 720).httpdate
 
