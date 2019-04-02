@@ -21,6 +21,7 @@ RUN apk add \
 	libltdl \
 	libtool \
 	linux-headers \
+	pngquant \
 	sudo \
 	tiff \
 	tiff-dev \

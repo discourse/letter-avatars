@@ -33,7 +33,7 @@ class LetterAvatar
       end
 
       `#{resize_command(temp_file_path, size)} 2>/dev/null`
-      `pngout #{temp_file_path} 2>/dev/null`
+      `pngquant #{temp_file_path} -o #{temp_file_path} --quality 10 --force 2>/dev/null`
 
       FileUtils.mv(temp_file_path, resized_path)
 
