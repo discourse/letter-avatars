@@ -41,7 +41,7 @@ class LetterAvatarApp
       return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
     end
 
-    letter = CGI::unescape($3).unicode_normalize.chr.upcase
+    letter = CGI::unescape($3).unicode_normalize.grapheme_clusters.first.upcase
 
     char_type = UnicodeRanges.detect_character_type(letter)
 

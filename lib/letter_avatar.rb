@@ -4,8 +4,7 @@ require 'securerandom'
 class LetterAvatar
   # CHANGE these values to support more pixel ratios
   FULLSIZE  = 120 * 3
-  POINTSIZE = 280
-
+  
   class << self
 
     def generate(letter, size, r, g, b, version = 1)
@@ -51,46 +50,50 @@ class LetterAvatar
 
     def v2
       @v2 ||= begin
-        offsets = Hash.new('-0+5')
-        offsets['0'] = '+6+5'
-        offsets['1'] = '+6+5'
-        offsets['2'] = '+6+5'
-        offsets['6'] = '+4+5'
-        offsets['7'] = '+8+5'
-        offsets['8'] = '+6+5'
-        offsets['9'] = '+4+5'
-        offsets['A'] = '+1+5'
-        offsets['B'] = '+12+5'
-        offsets['C'] = '+8+5'
-        offsets['D'] = '+12+5'
-        offsets['E'] = '+4+5'
-        offsets['F'] = '+6+5'
-        offsets['G'] = '+8+5'
-        offsets['H'] = '+10+5'
-        offsets['I'] = '+12+5'
-        offsets['J'] = '+8+5'
-        offsets['K'] = '+10+5'
-        offsets['L'] = '+8+5'
-        offsets['M'] = '+10+5'
-        offsets['N'] = '+10+5'
-        offsets['O'] = '+8+5'
-        offsets['P'] = '+12+5'
-        offsets['Q'] = '+8+5'
-        offsets['R'] = '+12+5'
-        offsets['T'] = '+4+5'
-        offsets['U'] = '+10+5'
-        offsets['V'] = '+1+5'
-        offsets['W'] = '+2+5'
-        offsets['X'] = '+2+5'
+        offsets = Hash.new('-0+0')
+        offsets['0'] = '+0+6'
+        offsets['1'] = '-4+6'
+        offsets['2'] = '+0+5'
+        offsets['3'] = '-3+4'
+        offsets['4'] = '-3+5'
+        offsets['5'] = '-7+5'
+        offsets['6'] = '-3+4'
+        offsets['7'] = '+4+6'
+        offsets['8'] = '+0+4'
+        offsets['9'] = '-1+7'
+        offsets['A'] = '+0+5'
+        offsets['B'] = '+3+6'
+        offsets['C'] = '+2+4'
+        offsets['D'] = '+4+6'
+        offsets['E'] = '-6+6'
+        offsets['F'] = '-4+6'
+        offsets['G'] = '+3+7'
+        offsets['H'] = '+1+7'
+        offsets['I'] = '+2+6'
+        offsets['J'] = '+6+5'
+        offsets['K'] = '-1+5'
+        offsets['L'] = '-1+6'
+        offsets['M'] = '+1+6'
+        offsets['N'] = '+1+6'
+        offsets['O'] = '+2+5'
+        offsets['P'] = '+3+5'
+        offsets['Q'] = '+2+6'
+        offsets['R'] = '+3+5'
+        offsets['S'] = '-4+6'
+        offsets['T'] = '+1+6'
+        offsets['U'] = '+2+5'
+        offsets['V'] = '+1+6'
+        offsets['W'] = '+0+6'
+        offsets['X'] = '+0+6'
         offsets['Y'] = '+2+5'
-        offsets['Z'] = '+8+5'
+        offsets['Z'] = '+4+6'
         ["Roboto-Medium", offsets]
       end
     end
 
     def v4
       @v4 ||= begin
-        offsets = Hash.new('-0+0')
+        offsets = Hash.new('+2-6')
         ["NotoSansMono-Medium", offsets]
       end
     end
@@ -98,23 +101,30 @@ class LetterAvatar
     def fullsize_command(path, letter, r, g, b, version, char_type)
       versions = {1 => v1, 2 => v2, 3 => v2, 4 => v4}
       font, offsets = versions[version]
+      pointsize = 280
 
       if version > 3
-        font = case char_type
+        font, pointsize = case char_type
           when 'latin'
-            'NotoSansMono-Medium.ttf'
+            ["NotoSansMono-Medium.ttf", 280] 
           when 'cjk'
-            'NotoSansMonoCJKsc-Regular.otf'
+            ['NotoSansMonoCJKsc-Regular.otf', 220] 
           when 'arabic'
-            'NotoSansArabic-Medium.ttf'
+            ['NotoSansArabic-Medium.ttf', 220] 
           when 'devaganari'
-            'NotoSansDevanagari-Medium.ttf'
+            ['NotoSansDevanagari-Medium.ttf', 220] 
           when 'bengali'
-            'NotoSansBengali-Medium.ttf'
+            ['NotoSansBengali-Medium.ttf', 220] 
           when 'javanese'
-            'NotoSansJavanese-Regular.ttf'
+            ['NotoSansJavanese-Regular.ttf', 220] 
           when 'telugu'
-            'NotoSansTelugu-Regular.ttf'
+            ['NotoSansTelugu-Regular.ttf', 280] 
+          when 'thai'
+            ['NotoSansThai-Medium.ttf', 280] 
+          when 'hebrew'
+            ['NotoSansHebrew-Medium.ttf', 280] 
+          when 'armenian'
+            ['NotoSansArmenian-Medium.ttf', 280] 
           end
       end
 
@@ -134,7 +144,7 @@ class LetterAvatar
         -colors 128
         -size #{FULLSIZE}x#{FULLSIZE}
         xc:'rgb(#{r},#{g},#{b})'
-        -pointsize #{POINTSIZE}
+        -pointsize #{pointsize}
         -fill '#FFFFFFCC'
         -font '#{font}'
         -gravity Center

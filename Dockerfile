@@ -1,4 +1,4 @@
-FROM ruby:2.6.2-alpine
+FROM ruby:2.6.2-alpine as builder
 
 ENV PREFIX /usr/local
 
@@ -83,23 +83,22 @@ ADD policy.xml /usr/local/etc/ImageMagick-7/
 
 ADD Gemfile /var/www/letter-avatars/Gemfile
 ADD Gemfile.lock /var/www/letter-avatars/Gemfile.lock
-ADD Roboto-Medium /var/www/letter-avatars/Roboto-Medium
-ADD NotoSansMono-Medium.ttf /var/www/letter-avatars/NotoSansMono-Medium.ttf
-ADD NotoSansMonoCJKsc-Regular.otf /var/www/letter-avatars/NotoSansMonoCJKsc-Regular.otf
-ADD NotoSansArabic-Medium.ttf /var/www/letter-avatars/NotoSansArabic-Medium.ttf
-ADD NotoSansDevanagari-Medium.ttf /var/www/letter-avatars/NotoSansDevanagari-Medium.ttf
-ADD NotoSansBengali-Medium.ttf /var/www/letter-avatars/NotoSansBengali-Medium.ttf
-ADD NotoSansJavanese-Regular.ttf /var/www/letter-avatars/NotoSansJavanese-Regular.ttf
-ADD NotoSansTelugu-Regular.ttf /var/www/letter-avatars/NotoSansTelugu-Regular.ttf
+ADD fonts/Roboto-Medium /var/www/letter-avatars/Roboto-Medium
+ADD fonts/NotoSansMono-Medium.ttf /var/www/letter-avatars/NotoSansMono-Medium.ttf
+ADD fonts/NotoSansMonoCJKsc-Regular.otf /var/www/letter-avatars/NotoSansMonoCJKsc-Regular.otf
+ADD fonts/NotoSansArabic-Medium.ttf /var/www/letter-avatars/NotoSansArabic-Medium.ttf
+ADD fonts/NotoSansDevanagari-Medium.ttf /var/www/letter-avatars/NotoSansDevanagari-Medium.ttf
+ADD fonts/NotoSansBengali-Medium.ttf /var/www/letter-avatars/NotoSansBengali-Medium.ttf
+ADD fonts/NotoSansJavanese-Regular.ttf /var/www/letter-avatars/NotoSansJavanese-Regular.ttf
+ADD fonts/NotoSansTelugu-Regular.ttf /var/www/letter-avatars/NotoSansTelugu-Regular.ttf
+ADD fonts/NotoSansThai-Medium.ttf /var/www/letter-avatars/NotoSansThai-Medium.ttf
+ADD fonts/NotoSansHebrew-Medium.ttf /var/www/letter-avatars/NotoSansHebrew-Medium.ttf
+ADD fonts/NotoSansArmenian-Medium.ttf /var/www/letter-avatars/NotoSansArmenian-Medium.ttf
 
 RUN adduser -s /bin/bash -u 9001 -D web \
 	&& cd /var/www/letter-avatars \
 	&& chown -R web . \
 	&& sudo -E -u web bundle install --deployment --verbose
-
-ADD config.ru /var/www/letter-avatars/config.ru
-ADD lib /var/www/letter-avatars/lib
-ADD unicorn.conf.rb /var/www/letter-avatars/unicorn.conf.rb
 
 RUN apk del \
 	autoconf \
@@ -116,5 +115,11 @@ RUN apk del \
 	xz \
 	xz-dev \
 	&& rm -rf /var/cache/apk/*
+
+FROM builder
+
+ADD config.ru /var/www/letter-avatars/config.ru
+ADD lib /var/www/letter-avatars/lib
+ADD unicorn.conf.rb /var/www/letter-avatars/unicorn.conf.rb
 
 ENTRYPOINT ["/sbin/tini", "--", "sudo", "-E", "-u", "web", "/bin/sh", "-c", "cd /var/www/letter-avatars && exec bundle exec unicorn -E production -c /var/www/letter-avatars/unicorn.conf.rb"]
