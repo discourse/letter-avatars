@@ -52,7 +52,7 @@ RUN mkdir /tmp/libpng \
 ENV IMAGEMAGICK_VERSION 7.0.8-35
 RUN mkdir /tmp/imagemagick \
 	&& cd /tmp/imagemagick \
-	&& wget -O ImageMagick.tar.gz "https://imagemagick.org/download/ImageMagick-$IMAGEMAGICK_VERSION.tar.gz" \
+	&& wget -O ImageMagick.tar.gz "https://github.com/ImageMagick/ImageMagick/archive/$IMAGEMAGICK_VERSION.tar.gz" \
 	&& tar zxf ImageMagick.tar.gz \
 	&& cd ImageMagick-${IMAGEMAGICK_VERSION} \
 	&& LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include ./configure \
