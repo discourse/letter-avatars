@@ -15,6 +15,10 @@ The variable part indicates which letter to render.  It can be specified as
 uppercase or lowercase, and will be rendered in uppercase in all
 circumstances.
 
+From version 4 onwards, the requested letter can be any unicode character, 
+URL encoded or not. If the character can't be draw using any of the fonts
+availiable in the fonts directory, the response will be 404.
+
 The URL can take the following query parameters.  All are optional, and
 have halfway-reasonable defaults.
 
@@ -30,8 +34,7 @@ have halfway-reasonable defaults.
 * `size` (default: 50) the number of pixels wide and high to make the image. 
   All avatar images are squares.
 
-* `v` (default: 1) which version of the API to use.  Only a value of `1` is
-  supported at this time.
+* `v` (default: 1) which version of the API to use.  Version 4 has unicode support.
 
 
 # Deployment
