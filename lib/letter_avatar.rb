@@ -161,7 +161,7 @@ class LetterAvatar
         -background transparent
         -thumbnail #{size}x#{size}
         -extent #{size}x#{size}
-        -interpolate bicubic
+        -interpolate Catrom
         -unsharp 2x0.5+0.7+0
         -quality 98
         -dither None
