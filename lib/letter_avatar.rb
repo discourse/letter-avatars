@@ -33,7 +33,7 @@ class LetterAvatar
       end
 
       `#{resize_command(temp_file_path, size)} 2>/dev/null`
-      `pngquant #{temp_file_path} -o #{temp_file_path} --quality 10 --force 2>/dev/null`
+      `pngquant #{temp_file_path} -o #{temp_file_path} --force 2>/dev/null`
 
       FileUtils.mv(temp_file_path, resized_path)
 
@@ -93,7 +93,7 @@ class LetterAvatar
 
     def v4
       @v4 ||= begin
-        offsets = Hash.new('+2-6')
+        offsets = Hash.new('+0-8')
         ["NotoSansMono-Medium", offsets]
       end
     end
