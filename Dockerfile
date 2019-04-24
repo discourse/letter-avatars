@@ -85,6 +85,7 @@ ADD policy.xml /usr/local/etc/ImageMagick-7/
 ADD Gemfile /var/www/letter-avatars/Gemfile
 ADD Gemfile.lock /var/www/letter-avatars/Gemfile.lock
 ADD fonts/Roboto-Medium /var/www/letter-avatars/Roboto-Medium
+ADD fonts/NotoSansDisplay-Medium.ttf /var/www/letter-avatars/NotoSansDisplay-Medium.ttf
 ADD fonts/NotoSansMono-Medium.ttf /var/www/letter-avatars/NotoSansMono-Medium.ttf
 ADD fonts/NotoSansMonoCJKsc-Regular.otf /var/www/letter-avatars/NotoSansMonoCJKsc-Regular.otf
 ADD fonts/NotoSansArabic-Medium.ttf /var/www/letter-avatars/NotoSansArabic-Medium.ttf

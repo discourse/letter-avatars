@@ -104,27 +104,30 @@ class LetterAvatar
       pointsize = 280
 
       if version > 3
-        font, pointsize = case char_type
-          when 'latin'
-            ["NotoSansMono-Medium.ttf", 280] 
+        pointsize = 220
+        font = case char_type
+          when 'display'
+            'NotoSansDisplay-Medium.ttf'
+          when 'mono'
+            'NotoSansMono-Medium.ttf'
           when 'cjk'
-            ['NotoSansMonoCJKsc-Regular.otf', 220] 
+            'NotoSansMonoCJKsc-Regular.otf'
           when 'arabic'
-            ['NotoSansArabic-Medium.ttf', 220] 
+            'NotoSansArabic-Medium.ttf'
           when 'devaganari'
-            ['NotoSansDevanagari-Medium.ttf', 220] 
+            'NotoSansDevanagari-Medium.ttf'
           when 'bengali'
-            ['NotoSansBengali-Medium.ttf', 220] 
+            'NotoSansBengali-Medium.ttf'
           when 'javanese'
-            ['NotoSansJavanese-Regular.ttf', 220] 
+            'NotoSansJavanese-Regular.ttf'
           when 'telugu'
-            ['NotoSansTelugu-Regular.ttf', 280] 
+            'NotoSansTelugu-Regular.ttf'
           when 'thai'
-            ['NotoSansThai-Medium.ttf', 280] 
+            'NotoSansThai-Medium.ttf'
           when 'hebrew'
-            ['NotoSansHebrew-Medium.ttf', 280] 
+            'NotoSansHebrew-Medium.ttf'
           when 'armenian'
-            ['NotoSansArmenian-Medium.ttf', 280] 
+            'NotoSansArmenian-Medium.ttf'
           end
       end
 
