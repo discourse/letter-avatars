@@ -59,6 +59,7 @@ class LetterAvatarApp
     headers = {
       'Content-Type' => 'image/png',
       'Cache-Control' => 'public, max-age=157788000',
+      'Cache-Tag' => "v#{version}",
       'Last-Modified' => 'Tue, 11 Jan 2000 00:57:26 GMT',
       'Expires' => expires,
       'Etag' => "#{letter}#{size}#{r}#{g}#{b}#{VERSION}",
