@@ -1,84 +1,104 @@
-FROM ruby:2.6.2-alpine as builder
+FROM ruby:2.6.3-alpine as builder
 
 ENV PREFIX /usr/local
 
+# Runtime dependencies
 RUN apk add \
-	autoconf \
-	automake \
-	build-base \
-	bzip2-dev \
-	freetype \
-	freetype-dev \
-	ghostscript \
-	ghostscript-dev \
-	ghostscript-fonts \
-	git \
-	libbz2 \
-	libgcc \
-	libgomp \
-	libjpeg-turbo \
-	libjpeg-turbo-dev \
-	libltdl \
-	libtool \
-	linux-headers \
-	pngquant \
-	sudo \
-	tiff \
-	tiff-dev \
-	tini \
-	xz \
-	xz-dev \
-	xz-libs
+    cairo \
+    freetype \
+    fribidi \
+    glib \
+    graphite2 \
+    icu-libs \
+    libbz2 \
+    libgcc \
+    libltdl \
+    libgomp \
+    pngquant \
+    sudo \
+    tini
 
-RUN mkdir /tmp/jemalloc	\
-	&& cd /tmp/jemalloc \
-	&& wget https://github.com/jemalloc/jemalloc/releases/download/3.6.0/jemalloc-3.6.0.tar.bz2 \
-	&& tar -xjf jemalloc-3.6.0.tar.bz2 && cd jemalloc-3.6.0 \
-	&& ./configure \
-	&& make -j \
-	&& mv lib/libjemalloc.so.1 /usr/lib \
-	&& rm -rf /tmp/jemalloc
+# Build dependencies
+RUN apk add \
+    autoconf \
+    automake \
+    build-base \
+    bzip2-dev \
+    cairo-dev \
+    fribidi-dev \
+    freetype-dev \
+    ghostscript-dev \
+    glib-dev \
+    gobject-introspection-dev \
+    graphite2-dev \
+    icu-dev \
+    libtool
 
-ENV LIBPNG_VERSION 1.6.36
+ENV JEMALLOC_VERSION 3.6.0
+RUN mkdir /tmp/jemalloc \
+    && cd /tmp/jemalloc \
+    && wget -O jemalloc.tar.bz2 https://github.com/jemalloc/jemalloc/releases/download/$JEMALLOC_VERSION/jemalloc-$JEMALLOC_VERSION.tar.bz2 \
+    && tar xjf jemalloc.tar.bz2 \
+    && cd jemalloc-$JEMALLOC_VERSION \
+    && ./configure \
+    && make -j \
+    && mv lib/libjemalloc.so.1 /usr/lib \
+    && rm -rf /tmp/jemalloc
+
+ENV HARFBUZZ_VERSION 2.4.0
+RUN mkdir /tmp/harfbuzz \
+    && cd /tmp/harfbuzz \
+    && wget -O harfbuzz.tar.bz2 https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-$HARFBUZZ_VERSION.tar.bz2 \
+    && tar xjf harfbuzz.tar.bz2 \
+    && cd harfbuzz-$HARFBUZZ_VERSION \
+    && ./configure \
+        --prefix=$PREFIX \
+        --with-glib \
+        --with-gobject \
+        --with-graphite2 \
+        --with-icu \
+    && make -j all \
+    && make -j install \
+    && rm -rf /tmp/harfbuzz
+
+ENV RAQM_VERSION 0.5.0
+RUN mkdir /tmp/raqm \
+    && cd /tmp/raqm \
+    && wget -O raqm.tar.gz https://github.com/HOST-Oman/libraqm/releases/download/v$RAQM_VERSION/raqm-$RAQM_VERSION.tar.gz \
+    && tar xzf raqm.tar.gz \
+    && cd raqm-$RAQM_VERSION \
+    && ./configure --prefix=$PREFIX \
+    && make -j all \
+    && make -j install \
+    && rm -rf /tmp/raqm
+
+ENV LIBPNG_VERSION 1.6.37
 RUN mkdir /tmp/libpng \
-	&& wget http://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.gz?downlolad -O /tmp/libpng/libpng.tar.gz \
-	&& cd /tmp/libpng \
-	&& tar -xzvf /tmp/libpng/libpng.tar.gz \
-	&& cd libpng-$LIBPNG_VERSION \
-	&& ./configure --prefix=$PREFIX \
-	&& make all && make install \
-	&& rm -rf /tmp/libpng
+    && cd /tmp/libpng \
+    && wget -O libpng.tar.gz https://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.gz?downlolad \
+    && tar xzf libpng.tar.gz \
+    && cd libpng-$LIBPNG_VERSION \
+    && ./configure --prefix=$PREFIX \
+    && make -j all \
+    && make -j install \
+    && rm -rf /tmp/libpng
 
-ENV IMAGEMAGICK_VERSION 7.0.8-35
+ENV IMAGE_MAGICK_VERSION 7.0.8-42
 RUN mkdir /tmp/imagemagick \
-	&& cd /tmp/imagemagick \
-	&& wget -O ImageMagick.tar.gz "https://github.com/ImageMagick/ImageMagick/archive/$IMAGEMAGICK_VERSION.tar.gz" \
-	&& tar zxf ImageMagick.tar.gz \
-	&& cd ImageMagick-${IMAGEMAGICK_VERSION} \
-	&& LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include ./configure \
-	   --prefix=$PREFIX \
-	   --enable-static \
-	   --enable-bounds-checking \
-	   --enable-hdri \
-	   --enable-hugepages \
-	   --with-threads \
-	   --with-modules \
-	   --with-quantum-depth=16 \
-	   --without-magick-plus-plus \
-	   --with-bzlib \
-	   --with-zlib \
-	   --with-gslib \
-	   --with-gs-font-dir=/usr/share/fonts/Type1 \
-	   --without-autotrace \
-	   --with-freetype \
-	   --with-jpeg \
-	   --without-lcms \
-	   --with-lzma \
-	   --with-png \
-	   --with-tiff \
-	&& make -j all \
-	&& make -j install \
-	&& rm -rf /tmp/imagemagick
+    && cd /tmp/imagemagick \
+    && wget -O ImageMagick.tar.gz https://github.com/ImageMagick/ImageMagick/archive/$IMAGE_MAGICK_VERSION.tar.gz \
+    && tar xzf ImageMagick.tar.gz \
+    && cd ImageMagick-${IMAGE_MAGICK_VERSION} \
+    && ./configure \
+        --prefix=$PREFIX \
+        --enable-static \
+        --enable-bounds-checking \
+        --enable-hugepages \
+        --with-modules \
+        --without-magick-plus-plus \
+    && make -j all \
+    && make -j install \
+    && rm -rf /tmp/imagemagick
 
 ADD policy.xml /usr/local/etc/ImageMagick-7/
 
@@ -98,25 +118,25 @@ ADD fonts/NotoSansHebrew-Medium.ttf /var/www/letter-avatars/NotoSansHebrew-Mediu
 ADD fonts/NotoSansArmenian-Medium.ttf /var/www/letter-avatars/NotoSansArmenian-Medium.ttf
 
 RUN adduser -s /bin/bash -u 9001 -D web \
-	&& cd /var/www/letter-avatars \
-	&& chown -R web . \
-	&& sudo -E -u web bundle install --deployment --verbose
+    && cd /var/www/letter-avatars \
+    && chown -R web . \
+    && sudo -E -u web bundle install --deployment --verbose
 
 RUN apk del \
-	autoconf \
-	automake \
-	build-base \
-	bzip2-dev \
-	freetype-dev \
-	ghostscript \
-	ghostscript-dev \
-	git \
-	libjpeg-turbo-dev \
-	libtool \
-	tiff-dev \
-	xz \
-	xz-dev \
-	&& rm -rf /var/cache/apk/*
+    autoconf \
+    automake \
+    build-base \
+    bzip2-dev \
+    cairo-dev \
+    fribidi-dev \
+    freetype-dev \
+    ghostscript-dev \
+    glib-dev \
+    gobject-introspection-dev \
+    graphite2-dev \
+    icu-dev \
+    libtool \
+    && rm -rf /var/cache/apk/*
 
 FROM builder
 
