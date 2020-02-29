@@ -9,7 +9,7 @@ group 'test' do
   gem 'chunky_png'
   gem 'guard-spork'
   gem 'guard-rspec'
-  gem 'rake', '~> 10.4', '>= 10.4.2'
+  gem 'rake', '~> 12.3'
   # Needed for guard
   gem 'rb-inotify', '~> 0.9'
   gem 'rspec'
