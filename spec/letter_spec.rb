@@ -1,5 +1,6 @@
 require_relative './spec_helper'
 require 'letter_avatar_app'
+require 'digest'
 
 describe LetterAvatarApp do
   include Rack::Test::Methods
@@ -30,13 +31,23 @@ describe LetterAvatarApp do
   let(:params)   { {} }
   let(:image)    { ChunkyPNG::Image.from_blob(response.body) }
 
-  %w{/ /wyzzle /letter /letter/foo}.each do |path|
+  %w{/wyzzle /letter /letter/foo}.each do |path|
     context path do
       let(:url) { path }
 
       it "returns a 404" do
         expect(response.status).to eq(404)
       end
+    end
+  end
+
+  context "root" do
+    let (:url) { "/" }
+
+    it "returns a short informative paragraph" do
+      expect(response.status).to eq(200)
+      expect(response['Content-Type']).to eq("text/html")
+      expect(response.body).to match('Discourse Letter Avatar Service')
     end
   end
 

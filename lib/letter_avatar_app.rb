@@ -11,13 +11,27 @@ class LetterAvatarApp
   STATIC_ASSETS = {
     '/.well-known/dnt-policy.txt' => File.read(File.dirname(__FILE__) << "/dnt-policy-1.0.txt"),
     # allow everything so crawlers can download images
-    '/robots.txt' => "User-Agent: *\nAllow: /"
+    '/robots.txt' => "User-Agent: *\nAllow: /",
+    '/' => <<HTML
+<!DOCTYPE html5>
+<html><head><meta charset='utf-8'/><title>Discourse Letter Avatar Service</title></head>
+<body>
+<h1>Discourse Letter Avatar Service</h1>
+<p>This is a fast, cookieless domain for generating "letter on colored background" avatars for
+<a href="https://www.discourse.org/">Discourse</a> sites.</p>
+<p>Forums that are <a href="https://www.discourse.org/pricing">hosted by Discourse</a> use this
+domain directly, while self-hosted forums proxy this domain to protect visitor privacy and provide
+better caching.</p>
+<hr>
+<p>The code for this service is available at
+<a href="https://github.com/discourse/letter-avatars">github/discourse/letter-avatars</a>.</p>
+HTML
   }
 
   def self.static_asset(path)
     if text = STATIC_ASSETS[path]
       [200, {
-        'Content-Type' => 'text/plain',
+        'Content-Type' => (path == '/') ? 'text/html' : 'text/plain',
         'Cache-Control' => 'public, max-age=86400',
         'Last-Modified' => 'Tue, 11 Jan 2000 00:57:26 GMT',
         'Content-Length' => text.bytesize.to_s,
@@ -84,6 +98,6 @@ class LetterAvatarApp
   end
 
   def self.error(code, msg)
-    [code, [['Content-Type', 'text/plain']], [msg]]
+    [code, {'Content-Type' => 'text/plain'}, [msg]]
   end
 end
