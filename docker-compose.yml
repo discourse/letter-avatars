@@ -7,13 +7,10 @@ services:
       - ./cache:/letter-avatars
     environment:
       - TEMP_FILE_PATH=/letter-avatars/app-cache
-    expose:
-      - "8080"
+      - UNICORN_SOCKET_PATH=/letter-avatars/unicorn.sock
   letter-avatars-nginx:
     build: ./nginx
     volumes:
       - ./cache:/letter-avatars
-    links:
-      - letter-avatars-app
     ports:
       - "82:80"
