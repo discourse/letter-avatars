@@ -11,4 +11,4 @@ push: build
 
 .PHONY: build
 build:
-	docker build --no-cache --squash -t ${IMAGE}:${TAG} .
+	docker build --no-cache -t ${IMAGE}:${TAG} .
