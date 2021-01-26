@@ -3,7 +3,6 @@ include /etc/nginx/conf.d/letter-avatars-http-ctx.conf;
 proxy_cache_path ${NGINX_CACHE_PATH}/nginx-cache keys_zone=one:10m max_size=2000m;
 
 upstream app {
-  server letter-avatars-app:8080;
   server unix:${NGINX_CACHE_PATH}/unicorn.sock;
 }
 
