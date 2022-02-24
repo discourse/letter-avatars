@@ -1,4 +1,4 @@
-FROM nginx:1.21.6-alpine
+FROM --platform=linux/amd64 nginx:1.21.6-alpine
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY default.conf.template /etc/nginx/templates/default.conf.template
