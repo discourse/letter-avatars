@@ -39,8 +39,9 @@ server {
 
   location / {
 
-    # proxy_cache is incompatible with X-Accel-Redirect.  As a workaround,
-    # have nginx talk to itself.  Both features are able to coexist in harmony
+    # proxy_cache is incompatible with X-Accel-Redirect.
+    # Have nginx talk to itself as a workaround.
+    # Both features are able to coexist in harmony
     # when the server blocks are arranged in this manner.
 
     proxy_cache one;
