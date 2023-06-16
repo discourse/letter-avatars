@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec setpriv --reuid web --regid web --init-groups "$@"

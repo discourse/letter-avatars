@@ -1,10 +1,10 @@
-version: '2'
+version: '3.8'
 
 services:
   letter-avatars-app:
     build: .
     volumes:
-      - ./cache:/letter-avatars
+      - data:/letter-avatars
     environment:
       - TEMP_FILE_PATH=/letter-avatars/app-cache
       - UNICORN_SOCKET_PATH=/letter-avatars/unicorn.sock
@@ -13,6 +13,9 @@ services:
     environment:
       - NGINX_CACHE_PATH=/letter-avatars
     volumes:
-      - ./cache:/letter-avatars
+      - data:/letter-avatars
     ports:
       - "82:80"
+
+volumes:
+  data:

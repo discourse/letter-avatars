@@ -1,0 +1,21 @@
+#!/bin/sh
+
+GID="$(as-web id -g)"
+[ -n "${GID}" ] || exit
+
+ensure_dir_w() {
+  if ! as-web touch "${1}/.w-ok" 2>/dev/null ; then
+    chgrp "${GID}" "$1" || exit
+    chmod g+w      "$1" || exit
+  fi
+  as-web touch "${1}/.w-ok"      || exit
+  rm -f "${1}/.w-ok" 2>/dev/null || true
+}
+
+if [ -n "${UNICORN_SOCKET_PATH}" ]; then
+  ensure_dir_w "$(dirname "${UNICORN_SOCKET_PATH}")"
+fi
+
+cd /var/www/letter-avatars || exit
+
+exec tini -- as-web bundle exec unicorn -E production -c unicorn.conf.rb
