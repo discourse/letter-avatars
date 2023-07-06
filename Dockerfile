@@ -45,12 +45,11 @@ COPY fonts/Roboto-Medium \
         Gemfile \
         Gemfile.lock \
         config.ru \
-        lib \
         unicorn.conf.rb \
     /var/www/letter-avatars/
+COPY lib/ /var/www/letter-avatars/lib/
 COPY as-web entrypoint /usr/local/sbin/
-
-ADD policy.xml   /usr/local/etc/ImageMagick-7/
+COPY policy.xml   /usr/local/etc/ImageMagick-7/
 
 RUN adduser \
       --shell /bin/bash \
