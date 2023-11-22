@@ -2,7 +2,6 @@ source 'https://rubygems.org/'
 
 gem 'rack'
 gem 'unicorn'
-gem 'rack-logstash', '~> 0.2'
 
 group 'test' do
   gem 'bundler'
