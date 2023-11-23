@@ -1,16 +1,28 @@
 # syntax=docker/dockerfile:1
 
+FROM --platform=linux/amd64 debian:bookworm-slim AS bundle
+
+COPY Gemfile Gemfile.lock /var/www/letter-avatars/
+
+RUN <<EOF sh -exs
+DEBIAN_FRONTEND=noninteractive apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+  build-essential \
+  libffi-dev \
+  ruby-bundler \
+  ruby-dev
+cd /var/www/letter-avatars
+bundle config set deployment true
+bundle install --verbose
+EOF
+
+
 FROM --platform=linux/amd64 debian:bookworm-slim
 
 RUN <<EOF sh -exs
 DEBIAN_FRONTEND=noninteractive apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
-# rubygem build dependencies
-DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
-  build-essential \
-  libffi-dev \
-  ruby-dev
-# run time dependencies
 DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   imagemagick \
   libcairo2 \
@@ -30,10 +42,18 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   ruby-bundler \
   tini \
   util-linux
+adduser --quiet --disabled-password --uid 9001 --gecos '' --shell /bin/bash web
+DEBIAN_FRONTEND=noninteractive apt-get clean
+( find /var/lib/apt/lists -mindepth 1 -delete || true )
+( find /var/tmp           -mindepth 1 -delete || true )
+( find /tmp               -mindepth 1 -delete || true )
 EOF
 
-COPY Gemfile \
-     Gemfile.lock \
+COPY policy.xml /usr/local/etc/ImageMagick-7/
+
+COPY --from=bundle --chown=9001 /var/www/letter-avatars /var/www/letter-avatars/
+
+COPY --chown=9001 \
      config.ru \
      fonts/NotoSansArabic-Medium.ttf \
      fonts/NotoSansArmenian-Medium.ttf \
@@ -49,27 +69,9 @@ COPY Gemfile \
      fonts/Roboto-Medium \
      unicorn.conf.rb \
      /var/www/letter-avatars/
-COPY lib/       /var/www/letter-avatars/lib/
-COPY policy.xml /usr/local/etc/ImageMagick-7/
+COPY --chown=9001 lib/ /var/www/letter-avatars/lib/
 COPY as-web \
      entrypoint \
      /usr/local/sbin/
-
-RUN <<EOF sh -exs
-adduser --quiet --disabled-password --uid 9001 --gecos '' --shell /bin/bash web
-chown -R web /var/www/letter-avatars
-cd /var/www/letter-avatars
-as-web bundle config set deployment true
-as-web bundle install --verbose
-DEBIAN_FRONTEND=noninteractive apt-get -y remove --purge \
-  build-essential \
-  libffi-dev \
-  ruby-dev
-DEBIAN_FRONTEND=noninteractive apt-get -y autoremove --purge
-DEBIAN_FRONTEND=noninteractive apt-get clean
-( find /var/lib/apt/lists -mindepth 1 -delete || true )
-( find /var/tmp           -mindepth 1 -delete || true )
-( find /tmp               -mindepth 1 -delete || true )
-EOF
 
 ENTRYPOINT ["/usr/local/sbin/entrypoint"]
