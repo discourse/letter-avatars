@@ -14,6 +14,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   ruby-dev
 cd /var/www/letter-avatars
 bundle config set deployment true
+bundle config set without    development:test
 bundle install --verbose
 EOF
 
