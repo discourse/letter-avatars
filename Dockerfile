@@ -67,6 +67,7 @@ COPY --chown=9001 \
      fonts/NotoSansMonoCJKsc-Regular.otf \
      fonts/NotoSansTelugu-Regular.ttf \
      fonts/NotoSansThai-Medium.ttf \
+     fonts/NotoEmoji-Medium.ttf \
      fonts/Roboto-Medium \
      unicorn.conf.rb \
      /var/www/letter-avatars/

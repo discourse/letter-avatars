@@ -128,6 +128,8 @@ class LetterAvatar
             'NotoSansHebrew-Medium.ttf'
           when 'armenian'
             'NotoSansArmenian-Medium.ttf'
+          when 'emoji'
+            'NotoEmoji-Medium.ttf'
           end
       end
 
