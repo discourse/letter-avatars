@@ -9,34 +9,24 @@ distinctive avatar for users who haven't set one themselves.
 
 The only resource which this service will respond to is the path:
 
-    /letter/[a-z]
+    /v[VERSION_NUMBER]/letter/[CHARACTER]/[HEX_COLOR]/[SIZE].png
 
-The variable part indicates which letter to render.  It can be specified as
+`CHARACTER` indicates which letter to render.  It can be specified as
 uppercase or lowercase, and will be rendered in uppercase in all
 circumstances.
 
-From version 4 onwards, the requested letter can be any unicode character, 
+`HEX_COLOR` defines the background color.
+
+From `VERSION_NUMBER` 4 onwards, the requested letter can be any unicode character, 
 URL encoded or not. If the character can't be draw using any of the fonts
 availiable in the fonts directory, the response will be 404.
 
-The URL can take the following query parameters.  All are optional, and
-have halfway-reasonable defaults.
+* All avatar images are square.
 
-* `r` (default: 0) the "red" component of the background colour to use in
-  the image.
+* Maximum size is 360px (FULLSIZE)
 
-* `g` (default: 0) the "green" component of the background colour to use in
-  the image.
-
-* `b` (default: 0) the "blue" component of the background colour to use in
-  the image.
-
-* `size` (default: 50) the number of pixels wide and high to make the image. 
-  All avatar images are squares.
-
-* `v` (default: 1) which version of the API to use.  Version 4 has unicode support.
-
+* Images are cached.
 
 # Deployment
 
-Dockerfile ftw!
+`docker compose up`
