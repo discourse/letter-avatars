@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM --platform=linux/amd64 debian:bookworm-slim AS bundle
+FROM debian:bookworm-slim AS bundle
 
 COPY Gemfile Gemfile.lock /var/www/letter-avatars/
 
-RUN <<EOF sh -exs
+RUN <<'EOF' sh -exs
 DEBIAN_FRONTEND=noninteractive apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
@@ -19,9 +19,9 @@ bundle install --verbose
 EOF
 
 
-FROM --platform=linux/amd64 debian:bookworm-slim
+FROM debian:bookworm-slim
 
-RUN <<EOF sh -exs
+RUN <<'EOF' sh -exs
 DEBIAN_FRONTEND=noninteractive apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
