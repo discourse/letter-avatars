@@ -9,6 +9,7 @@ class LetterAvatarApp
   VERSION = 4
 
   STATIC_ASSETS = {
+    '/_health' => 'OK',
     '/.well-known/dnt-policy.txt' => File.read(File.dirname(__FILE__) << "/dnt-policy-1.0.txt"),
     # allow everything so crawlers can download images
     '/robots.txt' => "User-Agent: *\nAllow: /",
@@ -28,7 +29,11 @@ better caching.</p>
 HTML
   }
 
-  def self.static_asset(path)
+  def self.static_asset(path, query_string)
+    if path == '/_health' && !self.validate_cluster(query_string)
+      return
+    end
+
     if text = STATIC_ASSETS[path]
       [200, {
         'Content-Type' => (path == '/') ? 'text/html' : 'text/plain',
@@ -46,7 +51,7 @@ HTML
     end
 
     unless env['PATH_INFO'] =~ %r{^(/v(\d+))?/letter/([%\w.\-]+?)/([0-9A-Fa-f]{6})/(\d+)\.png$}
-      return static_asset(env['PATH_INFO']) || error(404, "Resource not found")
+      return static_asset(env['PATH_INFO'], env['QUERY_STRING']) || error(404, "Resource not found")
     end
 
     version = ($2 || 1).to_i
@@ -99,5 +104,12 @@ HTML
 
   def self.error(code, msg)
     [code, {'Content-Type' => 'text/plain'}, [msg]]
+  end
+
+  private
+
+  def self.validate_cluster(query_string)
+    qry = Rack::Utils.parse_nested_query(query_string)
+    qry['cluster'] == ENV['CLUSTER_NAME']
   end
 end
