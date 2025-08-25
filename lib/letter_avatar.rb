@@ -21,7 +21,7 @@ class LetterAvatar
 
       temp_file_path = temp_path("/" << SecureRandom.hex << ".png")
       temp_file_dir = File.dirname(temp_file_path)
-      FileUtils.mkdir_p(temp_file_dir) unless Dir.exists?(temp_file_dir)
+      FileUtils.mkdir_p(temp_file_dir) unless Dir.exist?(temp_file_dir)
 
       if File.exist?(fullsize_path)
         FileUtils.cp(fullsize_path, temp_file_path)

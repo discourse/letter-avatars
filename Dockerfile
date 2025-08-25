@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM debian:bookworm-slim AS bundle
+FROM debian:trixie-slim AS bundle
 
 COPY Gemfile Gemfile.lock /var/www/letter-avatars/
 
@@ -19,7 +19,7 @@ bundle install --verbose
 EOF
 
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN <<'EOF' sh -exs
 DEBIAN_FRONTEND=noninteractive apt-get update
@@ -33,7 +33,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   libgraphite2-3 \
   libgs-common \
   libharfbuzz0b \
-  libicu72 \
+  libicu76 \
   libjemalloc2 \
   libltdl7 \
   libpng16-16 \
@@ -43,7 +43,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   ruby-bundler \
   tini \
   util-linux
-adduser --quiet --disabled-password --uid 9001 --gecos '' --shell /bin/bash web
+useradd --uid 9001 --shell /bin/bash web
 DEBIAN_FRONTEND=noninteractive apt-get clean
 ( find /var/lib/apt/lists -mindepth 1 -delete || true )
 ( find /var/tmp           -mindepth 1 -delete || true )
