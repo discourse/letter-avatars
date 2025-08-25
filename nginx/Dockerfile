@@ -1,4 +1,4 @@
-FROM nginx:1.26.3-alpine3.20
+FROM nginx:1.28.0-alpine3.21
 
 COPY nginx.conf            /etc/nginx/nginx.conf
 COPY default.conf.template /etc/nginx/templates/default.conf.template
