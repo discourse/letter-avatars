@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM nginx:1.28.1-alpine3.23
+FROM nginx:1.28.2-alpine3.23
 
 RUN <<'EOF' sh -exs
 apk --no-progress --no-cache upgrade
